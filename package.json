@@ -1,0 +1,10 @@
+{
+  "name": "assignment",
+  "version": "1.0.0",
+  "description": "API status monitoring",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node src/server.js & sleep 2 && curl http://localhost:3000/status && kill %1"
+  }
+}

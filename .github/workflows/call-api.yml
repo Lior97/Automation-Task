@@ -1,0 +1,63 @@
+name: Update API Status
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start API server
+        run: |
+          npm start &
+          echo $! > api.pid
+          sleep 3
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..10}; do
+            if curl -f http://localhost:3000/health; then
+              echo "API is ready"
+              break
+            fi
+            echo "Waiting for API... ($i/10)"
+            sleep 2
+          done
+
+      - name: Call API and update README
+        uses: ./.github/actions/call-node-api
+
+      - name: Stop API server
+        if: always()
+        run: |
+          if [ -f api.pid ]; then
+            kill $(cat api.pid) || true
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update API status"
+            git push
+          fi

@@ -1,0 +1,5 @@
+name: 'Call API'
+description: 'Calls the local Node.js API and updates README.md'
+runs:
+  using: 'node20'
+  main: 'index.js'
