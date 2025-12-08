@@ -1,11 +1,7 @@
 The README is automatically updated by github actions with the latest API status.
 
 <!-- API_STATUS_START -->
-## API Status
 
-- **Status**: ok
-- **Service**: assignment
-- **Timestamp**: 2025-12-08T15:41:29.653Z
 <!-- API_STATUS_END -->
 
 1. Trigger the workflow manualy.
